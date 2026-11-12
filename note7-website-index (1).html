@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f7ff">
+  <meta name="description" content="note 7 — تطبيق واحد لتنظيم ملاحظاتك ومهامك ومشاريعك وعاداتك ويومياتك ومواعيدك.">
+  <title>note 7 | كل حياتك في مكان واحد</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap');
+    :root{
+      --bg:#f4f7ff;--ink:#182033;--muted:#7b8498;--blue:#4386f5;--teal:#20b7a8;
+      --purple:#8050e9;--pink:#e66c91;--orange:#eea52e;--glass:rgba(255,255,255,.68);
+      --line:rgba(255,255,255,.9);--shadow:0 18px 55px rgba(55,83,145,.10);
+      --radius:28px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:90px}
+    body{margin:0;font-family:"Cairo",Tahoma,Arial,sans-serif;color:var(--ink);background:var(--bg);overflow-x:hidden}
+    body:before,body:after{content:"";position:fixed;z-index:-1;border-radius:50%;filter:blur(1px);pointer-events:none}
+    body:before{width:680px;height:680px;top:-280px;right:-180px;background:rgba(47,196,181,.16)}
+    body:after{width:650px;height:650px;top:180px;left:-300px;background:rgba(70,133,245,.14)}
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+    .container{width:min(1160px,calc(100% - 40px));margin:auto}
+    .navbar{position:sticky;top:0;z-index:50;background:rgba(246,248,255,.76);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.8)}
+    .nav-inner{height:78px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+    .brand{display:flex;align-items:center;gap:11px;font-weight:900;font-size:24px;direction:ltr}
+    .brand-mark{width:43px;height:43px;border-radius:15px;display:grid;place-items:center;color:white;font-size:24px;background:linear-gradient(135deg,#398cf5,#7647e9);box-shadow:0 8px 20px #597fe64a}
+    .nav-links{display:flex;align-items:center;gap:27px;color:#626d83;font-size:14px;font-weight:700}
+    .nav-links a:hover{color:var(--blue)}
+    .nav-actions{display:flex;align-items:center;gap:10px}
+    .btn{border:0;border-radius:15px;padding:12px 21px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:.25s}
+    .btn:hover{transform:translateY(-3px);box-shadow:0 12px 24px #4b7ce52b}
+    .btn-primary{color:white;background:linear-gradient(110deg,#4388f6,#20b8a8);box-shadow:0 10px 24px #4388f52c}
+    .btn-soft{background:white;color:var(--ink);border:1px solid #e8edfa}
+    .menu-toggle{display:none;background:white;border:1px solid #e8edfa;border-radius:12px;padding:9px 12px;font-size:21px}
+    .hero{padding:82px 0 76px;min-height:650px;display:grid;grid-template-columns:1.03fr .97fr;align-items:center;gap:48px}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:99px;color:#168f88;background:#e4f8f5;font-size:13px;font-weight:800}
+    h1{font-size:clamp(42px,5.5vw,68px);line-height:1.25;margin:20px 0 17px;letter-spacing:-1.7px}
+    h1 span{background:linear-gradient(100deg,#4386f5,#20b7a8);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .hero-copy>p{font-size:17px;line-height:2;color:#69748a;max-width:560px;margin:0 0 27px}
+    .hero-buttons{display:flex;gap:12px;flex-wrap:wrap}
+    .trust-line{margin-top:24px;color:#8b94a7;font-size:12px}
+    .visual-wrap{position:relative;min-height:500px;display:grid;place-items:center}
+    .orb{position:absolute;width:420px;height:420px;border-radius:50%;background:linear-gradient(140deg,#bceee8a8,#b7d1ff9c);filter:blur(1px)}
+    .phone{position:relative;width:min(310px,78%);height:490px;border:9px solid #20283a;border-radius:42px;background:linear-gradient(160deg,#f9fbff,#eaf1ff);box-shadow:0 35px 80px #314a7b35;overflow:hidden;transform:rotate(-5deg);animation:float 6s ease-in-out infinite}
+    .phone-top{height:27px;display:flex;justify-content:space-between;padding:6px 15px;font-size:9px;color:#333}
+    .phone-content{padding:17px 15px}
+    .phone-greeting{background:#ffffffb8;border:1px solid white;border-radius:20px;padding:16px;margin-bottom:13px}
+    .phone-greeting small{color:var(--teal);font-weight:800}.phone-greeting b{display:block;font-size:25px;margin-top:3px}
+    .mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+    .mini-stat{background:#ffffffc9;border:1px solid white;border-radius:17px;padding:13px}
+    .mini-stat strong{display:block;font-size:27px;color:var(--blue)}.mini-stat span{font-size:11px;color:#65718a}
+    .phone-section{margin-top:15px;background:#ffffffc9;border:1px solid white;border-radius:18px;padding:13px}
+    .phone-section b{font-size:13px}.task-line{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:10px;color:#68748a}
+    .check{width:15px;height:15px;border-radius:5px;background:#d9f5ed;color:#19a58f;display:grid;place-items:center}
+    .floating-note{position:absolute;left:0;top:90px;background:#ffffffd9;border:1px solid white;border-radius:20px;padding:15px 18px;box-shadow:var(--shadow);animation:float 5s ease-in-out infinite}
+    .floating-note b{display:block;color:var(--blue);font-size:13px}.floating-note span{font-size:11px;color:#7a8497}
+    .floating-habit{position:absolute;right:0;bottom:65px;background:#ffffffdf;border:1px solid white;border-radius:20px;padding:15px 18px;box-shadow:var(--shadow);animation:float 5.5s ease-in-out infinite reverse}
+    .floating-habit strong{font-size:24px;color:var(--purple)}.floating-habit span{display:block;font-size:11px;color:#7a8497}
+    @keyframes float{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-13px) rotate(-3deg)}}
+    .section{padding:82px 0}
+    .section-head{text-align:center;max-width:680px;margin:0 auto 42px}
+    .section-head .eyebrow{margin-bottom:13px}
+    h2{font-size:clamp(30px,4vw,43px);margin:0 0 12px;line-height:1.35}
+    .section-head p{color:var(--muted);line-height:1.9;margin:0}
+    .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}
+    .feature{padding:25px 24px 27px;border:1px solid var(--line);background:var(--glass);backdrop-filter:blur(12px);border-radius:25px;box-shadow:0 12px 35px #50699a0c;transition:.3s}
+    .feature:hover{transform:translateY(-7px);box-shadow:var(--shadow)}
+    .feature-icon{width:54px;height:54px;border-radius:17px;display:grid;place-items:center;font-size:26px;margin-bottom:15px}
+    .feature h3{font-size:19px;margin:0 0 8px}.feature p{font-size:13px;color:var(--muted);line-height:1.9;margin:0}
+    .blue{background:#e2edff}.teal{background:#dcf7f1}.pink{background:#ffe5ed}.purple{background:#eee5ff}.orange{background:#fff0d7}.mint{background:#def6e8}.feature ul{padding:0 18px 0 0;margin:13px 0 0;color:#65718a;font-size:12px;line-height:2}
+    .why{display:grid;grid-template-columns:.9fr 1.1fr;gap:48px;align-items:center}
+    .why-panel{padding:34px;border-radius:30px;background:linear-gradient(135deg,#4288f5,#20b7a8);color:white;box-shadow:0 25px 55px #4386f536;position:relative;overflow:hidden}
+    .why-panel:after{content:"7";position:absolute;font-size:240px;font-weight:900;opacity:.09;left:10px;bottom:-100px;line-height:1}
+    .why-panel h3{font-size:29px;margin:0 0 12px}.why-panel p{line-height:2;color:#ffffffdf;position:relative;z-index:1}
+    .why-list{display:grid;gap:17px}.why-item{display:flex;gap:14px;align-items:flex-start}
+    .why-item .tick{flex:0 0 35px;height:35px;border-radius:12px;background:#e2f7f2;color:#18a58f;display:grid;place-items:center;font-weight:900}
+    .why-item b{display:block;margin-bottom:3px}.why-item span{font-size:13px;color:var(--muted);line-height:1.8}
+    .cta{padding:55px 30px;text-align:center;border-radius:32px;background:rgba(255,255,255,.72);border:1px solid white;box-shadow:var(--shadow)}
+    .cta p{color:var(--muted);line-height:1.9;margin:8px auto 22px;max-width:600px}
+    .legal{background:#f9faff;border-top:1px solid #e9eef8}
+    .legal-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .legal-card{background:white;border:1px solid #edf0f8;border-radius:24px;padding:26px;box-shadow:0 12px 35px #50699a0a}
+    .legal-card h3{font-size:21px;margin:0 0 12px}.legal-card h4{font-size:15px;margin:19px 0 5px}
+    .legal-card p,.legal-card li{font-size:13px;line-height:2;color:#68748a}
+    .legal-card ul{padding-right:20px;margin:8px 0}
+    .legal-note{font-size:12px;color:#929bad;margin-top:18px}
+    .faq-list{max-width:820px;margin:auto;display:grid;gap:11px}
+    .faq-item{border:1px solid #e9eef8;background:#ffffffc9;border-radius:17px;overflow:hidden}
+    .faq-question{width:100%;padding:17px 20px;background:transparent;border:0;text-align:right;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-weight:800;color:var(--ink)}
+    .faq-question span:last-child{font-size:20px;color:var(--blue);transition:.25s}
+    .faq-answer{max-height:0;overflow:hidden;transition:max-height .35s ease;padding:0 20px}
+    .faq-answer p{font-size:13px;line-height:2;color:var(--muted);margin:0;padding-bottom:17px}
+    .faq-item.active .faq-answer{max-height:220px}.faq-item.active .faq-question span:last-child{transform:rotate(45deg)}
+    .contact{display:flex;align-items:center;justify-content:space-between;gap:25px;padding:28px 30px;border-radius:24px;background:#eaf2ff;border:1px solid white}
+    .contact p{color:#758199;margin:5px 0 0;font-size:13px}
+    footer{padding:28px 0 35px;color:#8791a5;font-size:12px}
+    .footer-inner{display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap}
+    .footer-links{display:flex;gap:18px;flex-wrap:wrap}.footer-links a:hover{color:var(--blue)}
+    .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+
+    .pricing-wrap{max-width:510px;margin:0 auto}
+    .pricing-card{position:relative;overflow:hidden;padding:30px;border-radius:30px;background:rgba(255,255,255,.82);border:1px solid white;box-shadow:0 24px 65px rgba(55,83,145,.13)}
+    .pricing-card:before{content:"";position:absolute;inset:0 0 auto;height:7px;background:linear-gradient(90deg,#4386f5,#20b7a8,#8050e9)}
+    .pricing-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    .premium-label{font-weight:900;color:#6c50d9}.pricing-period{font-size:12px;color:#8490a5;background:#f0f3ff;padding:7px 12px;border-radius:30px}
+    .price{display:flex;align-items:baseline;gap:10px;margin:24px 0 7px}.price strong{font-size:62px;line-height:1;color:#4386f5}.price span{font-weight:800}.price small{font-size:12px;color:#8b95a8;font-weight:500}
+    .pricing-desc{font-size:13px;color:#7b8498;line-height:1.9}
+    .pricing-benefits{list-style:none;padding:0;margin:22px 0;display:grid;gap:13px}
+    .pricing-benefits li{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:#59657b;line-height:1.8}
+    .pricing-benefits li span{flex:0 0 22px;height:22px;border-radius:50%;background:#e1f7f1;color:#16a48e;text-align:center;font-weight:900}
+    .pricing-button{width:100%}.pricing-footnote{font-size:11px;line-height:1.9;color:#98a1b1;text-align:center;margin:15px 0 0}
+    .contact-details{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+    .contact-detail{font-size:13px;color:#5f6d85;background:#ffffffa8;border:1px solid #ffffff;border-radius:12px;padding:8px 12px}
+    @media(max-width:650px){.pricing-card{padding:25px 20px}.price strong{font-size:54px}}
+
+    @media(max-width:900px){.hero{grid-template-columns:1fr;text-align:center;padding-top:55px;gap:10px}.hero-copy>p{margin-right:auto;margin-left:auto}.hero-buttons{justify-content:center}.visual-wrap{min-height:490px}.features-grid{grid-template-columns:repeat(2,1fr)}.why{grid-template-columns:1fr}.why-panel{order:2}.nav-links{gap:15px}}
+    @media(max-width:650px){.container{width:min(100% - 28px,520px)}.nav-inner{height:68px}.menu-toggle{display:block}.nav-links{display:none;position:absolute;top:68px;right:14px;left:14px;padding:16px;background:#ffffffF2;border:1px solid white;border-radius:18px;box-shadow:var(--shadow);flex-direction:column;align-items:stretch;gap:0}.nav-links.open{display:flex}.nav-links a{padding:11px 8px}.nav-actions .btn{display:none}.hero{padding:48px 0 35px;min-height:0}h1{font-size:43px}.hero-copy>p{font-size:14px}.visual-wrap{min-height:430px}.phone{height:430px;width:270px}.orb{width:330px;height:330px}.floating-note{left:-2px;top:70px}.floating-habit{right:-2px;bottom:30px}.section{padding:62px 0}.features-grid,.legal-grid{grid-template-columns:1fr}.feature{padding:21px}.section-head{margin-bottom:28px}.contact{align-items:flex-start;flex-direction:column}.cta{padding:38px 20px}.footer-inner{justify-content:center;text-align:center}.footer-links{justify-content:center}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a class="brand" href="#home" aria-label="note 7 الصفحة الرئيسية"><span class="brand-mark">7</span><span>note 7</span></a>
+      <nav class="nav-links" id="navLinks">
+        <a href="#features">المميزات</a><a href="#why">لماذا note 7؟</a><a href="#premium">باقات Premium</a><a href="#terms">الشروط والأحكام</a><a href="#refund">الاسترجاع</a><a href="#contact">تواصل معنا</a>
+      </nav>
+      <div class="nav-actions"><a class="btn btn-primary" href="#features">اكتشف التطبيق <span>←</span></a><button class="menu-toggle" id="menuToggle" aria-label="فتح القائمة" aria-expanded="false">☰</button></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="container hero" id="home">
+      <div class="hero-copy">
+        <span class="eyebrow">✨ مساحة واحدة لكل تفاصيل يومك</span>
+        <h1>رتّب أفكارك،<br>ونظّم حياتك مع <span>note 7</span></h1>
+        <p>كل ما تحتاجه لتنظيم حياتك في مكان واحد. دوّن أفكارك، وأنجز مهامك، وتابع مشاريعك وعاداتك، واكتب يومياتك — بخطوات بسيطة وواجهة هادئة تساعدك تبدأ وتستمر.</p>
+        <div class="hero-buttons"><a class="btn btn-primary" href="#features">استكشف المميزات <span>↙</span></a><a class="btn btn-soft" href="#contact">تواصل معنا</a></div>
+        <div class="trust-line">📝 ملاحظات &nbsp;·&nbsp; ✅ مهام &nbsp;·&nbsp; 📅 تقويم &nbsp;·&nbsp; 🌱 عادات &nbsp;·&nbsp; 📖 يوميات</div>
+      </div>
+      <div class="visual-wrap" aria-label="تصميم توضيحي لواجهة تطبيق note 7">
+        <div class="orb"></div>
+        <div class="floating-note"><b>⚡ الملاحظات السريعة</b><span>أفكارك المهمة في متناول يدك</span></div>
+        <div class="phone">
+          <div class="phone-top"><span>● ● ●</span><span>9:41</span></div>
+          <div class="phone-content">
+            <div class="phone-greeting"><small>مساء الخير</small><b>أهلاً بك 👋</b><span style="font-size:10px;color:#8791a5">ابدأ يومك بخطوة منظمة</span></div>
+            <div class="mini-stats"><div class="mini-stat"><strong>11</strong><span>مهمة</span></div><div class="mini-stat"><strong style="color:#20b7a8">8</strong><span>ملاحظة</span></div><div class="mini-stat"><strong style="color:#8050e9">55%</strong><span>إنجاز</span></div><div class="mini-stat"><strong style="color:#eea52e">6</strong><span>مشروع</span></div></div>
+            <div class="phone-section"><b>مهام اليوم ✨</b><div class="task-line"><span class="check">✓</span> ترتيب الأولويات</div><div class="task-line"><span class="check">✓</span> قراءة 20 صفحة</div><div class="task-line"><span class="check">·</span> مراجعة أهداف الأسبوع</div></div>
+            <div class="phone-section"><b>عاداتي اليومية 🌱</b><div class="task-line">🔥 الاستمرار يصنع الفرق</div></div>
+          </div>
+        </div>
+        <div class="floating-habit"><strong>🔥 7 أيام</strong><span>سلسلة عاداتك مستمرة</span></div>
+      </div>
+    </section>
+
+    <section class="section container" id="features">
+      <div class="section-head reveal"><span class="eyebrow">كل أدواتك في مكان واحد</span><h2>مساحة لكل جانب من حياتك</h2><p>من الفكرة الصغيرة إلى المشروع الكبير، note 7 يساعدك تجمع التفاصيل وتتابع تقدمك من واجهة واحدة.</p></div>
+      <div class="features-grid">
+        <article class="feature reveal"><div class="feature-icon blue">📝</div><h3>الملاحظات</h3><p>دوّن أفكارك بسرعة، واحتفظ بكل ما يهمك بطريقة مرتبة وسهلة الوصول.</p><ul><li>تنظيم الملاحظات داخل مجلدات.</li><li>إضافة وسوم للعثور عليها بسرعة.</li><li>تثبيت المهم أو أرشفته.</li></ul></article>
+        <article class="feature reveal"><div class="feature-icon teal">✅</div><h3>المهام</h3><p>حوّل خططك إلى خطوات واضحة، وتابع ما أنجزته وما ينتظرك.</p><ul><li>تحديد الأولوية والموعد النهائي.</li><li>تذكيرات للمهام المهمة.</li><li>متابعة نسبة الإنجاز والتقدم.</li></ul></article>
+        <article class="feature reveal"><div class="feature-icon purple">📂</div><h3>المشاريع</h3><p>نظّم أعمالك الكبيرة وتابع مراحلها دون أن تفقد الصورة الكاملة.</p><ul><li>لوحات كانبان لتنظيم العمل.</li><li>تقسيم المشروع إلى مراحل.</li><li>معرفة ما اكتمل وما هو قيد التنفيذ.</li></ul></article>
+        <article class="feature reveal"><div class="feature-icon orange">📅</div><h3>التقويم</h3><p>اجعل مواعيدك وأحداثك المهمة واضحة أمامك في مكان واحد.</p><ul><li>تسجيل الأحداث والمواعيد.</li><li>تنظيم جدولك والتزاماتك القادمة.</li><li>تذكيرات تساعدك على الاستعداد.</li></ul></article>
+        <article class="feature reveal"><div class="feature-icon pink">📖</div><h3>اليوميات</h3><p>اجعل الكتابة عادة تساعدك على فهم نفسك وملاحظة تطورك.</p><ul><li>خمسة أقسام متكاملة للتدوين.</li><li>رسائل إلى نفسك في المستقبل.</li><li>تسجيل 3 أشياء تشعر بالامتنان لها.</li><li>تحديد أهداف وخطوات قابلة للتحقيق.</li></ul></article>
+        <article class="feature reveal"><div class="feature-icon blue">💬</div><h3>صندوق الفضفضة</h3><p>مساحة خاصة تكتب فيها ما بداخلك بحرية، وتفرغ أفكارك ومشاعرك لنفسك.</p><ul><li>اكتب دون قيود أو أحكام.</li><li>احتفظ بكتاباتك في مساحتك الخاصة.</li></ul></article>
+        <article class="feature reveal"><div class="feature-icon mint">🌱</div><h3>العادات اليومية</h3><p>ابدأ بخطوات صغيرة وراقب أثر الاستمرار يومًا بعد يوم.</p><ul><li>إضافة العادات ومتابعة الالتزام.</li><li>تتبّع الأيام المتتالية (Streak).</li><li>راقب تقدمك وشجّع نفسك.</li></ul></article>
+        <article class="feature reveal"><div class="feature-icon purple">⚡</div><h3>الملاحظات السريعة</h3><p>التقط الفكرة فور ظهورها، قبل أن تنشغل عنها أو تنساها.</p><ul><li>وصول سريع للتدوين.</li><li>مكان جاهز للأفكار العابرة.</li></ul></article>
+        <article class="feature reveal"><div class="feature-icon orange">🎯</div><h3>تقدم أوضح</h3><p>اجمع تفاصيل يومك في مساحة منظمة تساعدك على التركيز على ما يهم.</p><ul><li>تابع مهامك ومشاريعك.</li><li>احتفل بخطواتك وإنجازاتك.</li></ul></article>
+      </div>
+    </section>
+
+    <section class="section container" id="why">
+      <div class="why">
+        <div class="why-panel reveal"><h3>حياتك مش محتاجة تعقيد 💙</h3><p>التنظيم مش إنك تعمل كل حاجة مرة واحدة؛ التنظيم إنك تعرف خطوتك الجاية. note 7 يجمع أدواتك اليومية في تجربة واحدة بسيطة وهادئة.</p></div>
+        <div class="reveal"><span class="eyebrow">ابدأ من مكانك</span><h2>خطّط ليومك، وتابع تقدمك، واحتفل بإنجازك.</h2><div class="why-list">
+          <div class="why-item"><div class="tick">✓</div><div><b>كل شيء في مكان واحد</b><span>بدل التنقل بين أدوات كثيرة، اجمع ملاحظاتك ومهامك ومشاريعك وعاداتك.</span></div></div>
+          <div class="why-item"><div class="tick">✓</div><div><b>واجهة واضحة ومريحة</b><span>تصميم هادئ يساعدك تركز على المحتوى والخطوة التالية.</span></div></div>
+          <div class="why-item"><div class="tick">✓</div><div><b>تقدم تقدر تلاحظه</b><span>تابع إنجازك وعاداتك ومراحل مشاريعك، خطوة وراء خطوة.</span></div></div>
+        </div></div>
+      </div>
+    </section>
+
+
+    <section class="section container" id="premium">
+      <div class="section-head reveal">
+        <span class="eyebrow">ارتقِ بتجربتك مع note 7</span>
+        <h2>باقات الاشتراك</h2>
+        <p>ابدأ بتنظيم يومك، واستمتع بمزايا note 7 Premium مقابل اشتراك شهري بسيط.</p>
+      </div>
+      <div class="pricing-wrap reveal">
+        <article class="pricing-card">
+          <div class="pricing-top">
+            <span class="premium-label">✨ note 7 Premium</span>
+            <span class="pricing-period">اشتراك شهري</span>
+          </div>
+          <div class="price"><strong>49</strong><span>جنيه مصري <small>/ شهريًا</small></span></div>
+          <p class="pricing-desc">تجربة بريميم لتنظيم حياتك ومتابعة أهدافك بصورة أفضل.</p>
+          <ul class="pricing-benefits">
+            <li><span>✓</span> الوصول إلى مزايا Premium المتاحة داخل التطبيق.</li>
+            <li><span>✓</span> مساحة متكاملة لتنظيم ملاحظاتك ومهامك ومشاريعك.</li>
+            <li><span>✓</span> متابعة عاداتك ويومياتك وخططك اليومية.</li>
+            <li><span>✓</span> تجربة تنظيم أكثر مرونة في مكان واحد.</li>
+          </ul>
+          <a class="btn btn-primary pricing-button" href="mailto:ot.note7@gmail.com?subject=استفسار%20عن%20اشتراك%20note%207%20Premium">استفسر عن الاشتراك</a>
+          <p class="pricing-footnote">السعر: 49 جنيهًا مصريًا شهريًا. تظهر تفاصيل الدفع والتجديد والإلغاء قبل تأكيد الشراء من خلال جهة الدفع المعتمدة.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section container">
+      <div class="cta reveal"><span class="eyebrow">note 7 — ابدأ رحلتك</span><h2>كل يوم فرصة لبداية أكثر تنظيمًا</h2><p>خلّي أفكارك واضحة، وخططك أقرب للتنفيذ، وعاداتك أسهل في المتابعة. ابدأ بخطوة صغيرة اليوم.</p><a class="btn btn-primary" href="mailto:ot.note7@gmail.com?subject=استفسار%20عن%20تطبيق%20note%207">تواصل مع فريق note 7 ✉</a></div>
+    </section>
+
+    <section class="section legal" id="terms">
+      <div class="container">
+        <div class="section-head reveal"><span class="eyebrow">معلومات مهمة</span><h2>الشروط والأحكام</h2><p>يرجى قراءة الشروط التالية قبل استخدام تطبيق note 7.</p></div>
+        <div class="legal-grid">
+          <article class="legal-card reveal">
+            <h3>1. قبول الشروط</h3><p>باستخدامك لتطبيق note 7 أو إنشاء حساب، فإنك تقر بأنك قرأت هذه الشروط وتوافق على الالتزام بها. إذا كنت لا توافق عليها، يرجى التوقف عن استخدام التطبيق.</p>
+            <h4>2. استخدام التطبيق والحساب</h4><ul><li>تقديم بيانات تسجيل صحيحة والمحافظة على سرية بيانات الدخول.</li><li>أنت مسؤول عن الأنشطة التي تتم من خلال حسابك، وعن حماية جهازك وبيانات الوصول إليه.</li><li>استخدم التطبيق لأغراض مشروعة، ولا تحاول تعطيل الخدمة أو الوصول غير المصرح به إلى حسابات أو بيانات الآخرين.</li><li>لا تستخدم التطبيق لنشر محتوى غير قانوني أو ينتهك حقوق الآخرين.</li></ul>
+            <h4>3. المحتوى والبيانات الشخصية</h4><p>الملاحظات والمهام واليوميات والمحتوى الذي تدخله يظل مسؤوليتك. احرص على الاحتفاظ بنسخة من أي محتوى مهم. لا تشارك كلمات المرور أو المعلومات الحساسة داخل المحتوى إلا عند الضرورة وبعد تقييم المخاطر.</p>
+            <h4>4. توفر الخدمة والتحديثات</h4><p>نسعى إلى توفير التطبيق بصورة مستقرة، لكن قد تحدث أعمال صيانة أو تحديثات أو أعطال مؤقتة. قد نضيف ميزات أو نعدلها أو نوقف جزءًا منها لتحسين الخدمة أو لأسباب تشغيلية أو أمنية.</p>
+          </article>
+          <article class="legal-card reveal">
+            <h3>5. الاشتراكات والمزايا المدفوعة</h3><p>يعرض الموقع باقة note 7 Premium بسعر 49 جنيهًا مصريًا شهريًا. إذا وفر التطبيق اشتراكًا أو مزايا مدفوعة، فستظهر تفاصيل السعر والمدة والتجديد وطريقة الإلغاء قبل إتمام عملية الشراء. تتم إدارة الفوترة والإلغاء والاسترداد وفق القواعد المعمول بها لدى جهة الدفع أو المتجر الذي تمت من خلاله عملية الشراء.</p>
+            <h4>6. الملكية الفكرية</h4><p>تعود حقوق التطبيق واسمه وتصميمه وعناصره البرمجية إلى مالكيها، ولا يجوز نسخها أو إعادة توزيعها أو استغلالها تجاريًا دون إذن كتابي مسبق، باستثناء ما يسمح به القانون.</p>
+            <h4>7. حدود المسؤولية</h4><p>إلى الحد الذي يسمح به القانون، لا نتحمل المسؤولية عن فقدان البيانات الناتج عن جهاز المستخدم أو انقطاع الاتصال أو خدمات الأطراف الخارجية أو سوء الاستخدام. لا تهدف هذه الشروط إلى استبعاد أي حقوق لا يجوز استبعادها قانونًا.</p>
+            <h4>8. تعديل الشروط</h4><p>قد نحدّث هذه الشروط من وقت لآخر. سيتم نشر النسخة الأحدث على هذه الصفحة مع تحديث تاريخ المراجعة. استمرارك في استخدام التطبيق بعد نشر التعديلات يعني قبولك للشروط المحدثة، بالقدر الذي يسمح به القانون.</p>
+            <h4>9. التواصل</h4><p>لأي استفسار متعلق بالشروط، يمكنك مراسلتنا على <a href="mailto:ot.note7@gmail.com" style="color:#4386f5;font-weight:800">ot.note7@gmail.com</a>.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container" id="refund">
+      <div class="section-head reveal"><span class="eyebrow">سياسة المشتريات</span><h2>سياسة الاستبدال والاسترجاع</h2><p>سياسة واضحة للتعامل مع المشتريات الرقمية والاشتراكات — دون وعود تخالف قواعد جهة الدفع.</p></div>
+      <div class="legal-grid">
+        <article class="legal-card reveal">
+          <h3>طبيعة الخدمة</h3><p>note 7 تطبيق وخدمة رقمية، ولا يتضمن بيع أو شحن منتجات مادية؛ لذلك لا ينطبق عليه الاستبدال المادي للسلع. إذا كانت هناك مزايا مدفوعة أو اشتراكات، فتخضع عمليات الشراء والاسترجاع للشروط المعروضة وقت الدفع ولسياسات المتجر أو مزود الدفع المستخدم.</p>
+          <h4>طلب استرداد مبلغ</h4><ul><li>إذا تم الشراء عبر Google Play، يرجى تقديم طلب الاسترداد من خلال Google Play وفق سياسة الاسترداد الخاصة به.</li><li>إذا تم الشراء عبر مزود دفع آخر، تواصل معنا مع توضيح تاريخ العملية والمبلغ ومرجع المعاملة، دون إرسال بيانات البطاقة كاملة أو كلمة المرور.</li><li>سنراجع الطلب ونوجهك إلى الإجراء المناسب، وقد نطلب معلومات إضافية للتحقق من العملية.</li></ul>
+        </article>
+        <article class="legal-card reveal">
+          <h3>المشكلات الفنية والشراء غير المقصود</h3><p>إذا واجهت مشكلة منعتك من الوصول إلى ميزة مدفوعة بعد إتمام الدفع، راسلنا من البريد الإلكتروني المرتبط بحسابك واشرح المشكلة، وسنبذل جهدًا معقولًا للتحقق منها ومساعدتك.</p>
+          <h4>إلغاء الاشتراك</h4><p>إلغاء الاشتراك يوقف التجديد المستقبلي وفق آلية جهة الدفع، ولا يعني بالضرورة استرداد المبالغ التي سبق تحصيلها. احذف الاشتراك أو أوقف تجديده من إعدادات المتجر أو مزود الدفع الذي اشتركت من خلاله.</p>
+          <h4>التواصل بشأن الاسترجاع</h4><p>البريد الإلكتروني: <a href="mailto:ot.note7@gmail.com?subject=طلب%20مساعدة%20بخصوص%20عملية%20شراء" style="color:#4386f5;font-weight:800">ot.note7@gmail.com</a></p>
+          <p>يرجى إرفاق رقم الطلب أو مرجع المعاملة وتاريخها ووصف مختصر للمشكلة. لا ترسل رقم البطاقة كاملًا أو رمز التحقق أو كلمة المرور.</p>
+        </article>
+      </div>
+      <p class="legal-note">ملاحظة: هذه صياغة عامة مناسبة لخدمة رقمية، ويجب مراجعتها قانونيًا ومواءمتها مع طريقة الدفع والاشتراك الفعلية والبلدان التي تقدم فيها الخدمة. لا تنتقص هذه السياسة من أي حقوق إلزامية للمستهلك بموجب القانون المحلي.</p>
+    </section>
+
+    <section class="section container" id="faq">
+      <div class="section-head reveal"><span class="eyebrow">أسئلة شائعة</span><h2>قد تجد إجابتك هنا</h2></div>
+      <div class="faq-list">
+        <div class="faq-item reveal"><button class="faq-question"><span>ما الذي يمكنني تنظيمه باستخدام note 7؟</span><span>＋</span></button><div class="faq-answer"><p>يمكنك تنظيم الملاحظات والمهام والمشاريع والمواعيد والعادات اليومية واليوميات وصندوق الفضفضة من مكان واحد.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-question"><span>هل يمكنني طلب المساعدة أو الإبلاغ عن مشكلة؟</span><span>＋</span></button><div class="faq-answer"><p>بالتأكيد. أرسل تفاصيل المشكلة إلى ot.note7@gmail.com، ويفضل إضافة وصف للمشكلة ونوع الجهاز وإصدار التطبيق إن أمكن.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-question"><span>كيف ألغي اشتراكي أو أطلب استردادًا؟</span><span>＋</span></button><div class="faq-answer"><p>يتم إلغاء الاشتراك وطلب الاسترداد من خلال المتجر أو مزود الدفع الذي استخدمته، وفق سياساته. يمكنك مراسلتنا إذا احتجت إلى مساعدة في تحديد الخطوة المناسبة.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-question"><span>هل التطبيق يبيع منتجات مادية؟</span><span>＋</span></button><div class="faq-answer"><p>لا، note 7 خدمة رقمية؛ لذلك لا توجد عمليات شحن أو استبدال لمنتجات مادية.</p></div></div>
+      </div>
+    </section>
+
+    <section class="container section" id="contact">
+      <div class="contact reveal"><div><h2 style="font-size:25px;margin:0">يسعدنا نسمع منك 💙</h2><p>للاستفسارات والدعم والمقترحات، تواصل معنا عبر أي من الوسائل التالية.</p><div class="contact-details"><span class="contact-detail">📍 أسيوط، الأزهر، مصر</span><a class="contact-detail" href="tel:+201144842231">📞 01144842231</a><a class="contact-detail" href="mailto:ot.note7@gmail.com">✉ ot.note7@gmail.com</a></div></div><a class="btn btn-primary" href="mailto:ot.note7@gmail.com">راسلنا الآن ↗</a></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <a class="brand" href="#home"><span class="brand-mark">7</span><span>note 7</span></a>
+      <div class="footer-links"><a href="#terms">الشروط والأحكام</a><a href="#refund">الاستبدال والاسترجاع</a><a href="#contact">اتصل بنا</a></div>
+      <span>© <span id="year"></span> note 7. جميع الحقوق محفوظة.</span>
+    </div>
+  </footer>
+  <script>
+    // قائمة الهاتف
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+    menuToggle.addEventListener('click', () => {
+      const opened = navLinks.classList.toggle('open');
+      menuToggle.setAttribute('aria-expanded', String(opened));
+      menuToggle.textContent = opened ? '×' : '☰';
+    });
+    navLinks.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.textContent = '☰';
+    }));
+
+    // فتح وإغلاق الأسئلة الشائعة
+    document.querySelectorAll('.faq-question').forEach(button => {
+      button.addEventListener('click', () => {
+        const item = button.closest('.faq-item');
+        item.classList.toggle('active');
+        const symbol = button.querySelector('span:last-child');
+        symbol.textContent = item.classList.contains('active') ? '−' : '＋';
+      });
+    });
+
+    // ظهور العناصر عند التمرير
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
